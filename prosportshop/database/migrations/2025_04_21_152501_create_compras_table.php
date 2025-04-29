@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('compras', function (Blueprint $table) {
             $table->id('id_compra');
-            $table->foreignId('id_usuario')->references('id_usuario')->on('usuarios');
+            $table->foreignId('id_usuario')->references('id_usuario')->on('users');
             $table->foreignId('id_producto')->references('id_producto')->on('productos');
             $table->date('fecha_compra');
             $table->decimal('precio_compra', 10, 2);

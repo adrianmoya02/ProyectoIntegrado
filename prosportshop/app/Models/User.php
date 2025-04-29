@@ -14,51 +14,60 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id_usuario';
+
+    /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
-        'dni',
-        'name',
-        'apell',
+        'nombre',
+        'primer_apellido',
+        'segundo_apellido',
         'direccion',
         'email',
-        'password',
-        'role',
+        'contrasena',
+        'numero_cuenta',
+        'rol',
+        'localidad',
+        'provincia',
+        'codigo_postal',
+        'telefono',
+        'fecha_nacimiento',
+        'estado',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'contrasena',
         'remember_token',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'fecha_nacimiento' => 'date',
+    ];
 
     public function isAdmin()
-{
-    return $this->role === 'admin';
-}
-
-public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->role === 'admin';
+    }
+    public function isUser()
+    {
+        return $this->role === 'user';
     }
 
 }

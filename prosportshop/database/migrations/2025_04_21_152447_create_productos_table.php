@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('imagen')->nullable();
             $table->text('descripcion')->nullable();
             $table->string('estado');
-            $table->foreignId('id_categoria')->constrained('categoria_producto');
+            $table->foreignId('id_categoria')->references('id_categoria')->on('categoria_producto');
             $table->timestamps();
         });
     }

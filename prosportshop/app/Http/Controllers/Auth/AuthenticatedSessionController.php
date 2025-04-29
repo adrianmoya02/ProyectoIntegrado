@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('product.index');
+        return redirect()->route('home')->with('success', 'Bienvenido de nuevo');
     }
 
     /**

@@ -30,24 +30,43 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nombre' => ['required', 'string', 'max:255'],
+            'primer_apellido' => ['nullable', 'string', 'max:255'],
+            'segundo_apellido' => ['nullable', 'string', 'max:255'],
+            'direccion' => ['nullable', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'contrasena' => ['required', 'confirmed', Rules\Password::defaults()],
+            'numero_cuenta' => ['required', 'string', 'max:255'],
+            'rol' => ['required', 'string', 'max:50'],
+            'localidad' => ['required', 'string', 'max:255'],
+            'provincia' => ['required', 'string', 'max:255'],
+            'codigo_postal' => ['required', 'string', 'max:10'],
+            'telefono' => ['required', 'string', 'max:15'],
+            'fecha_nacimiento' => ['required', 'date'],
+            'estado' => ['required', 'string', 'max:50'],
         ]);
 
         $user = User::create([
-            'dni' => $request->dni,
-            'name' => $request->name,
-            'apell' => $request->apell,
+            'nombre' => $request->nombre,
+            'primer_apellido' => $request->primer_apellido,
+            'segundo_apellido' => $request->segundo_apellido,
             'direccion' => $request->direccion,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'contrasena' => Hash::make($request->contrasena),
+            'numero_cuenta' => $request->numero_cuenta,
+            'rol' => $request->rol,
+            'localidad' => $request->localidad,
+            'provincia' => $request->provincia,
+            'codigo_postal' => $request->codigo_postal,
+            'telefono' => $request->telefono,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'estado' => $request->estado,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->route('product.index');
+        return redirect()->route('dashboard')->with('success', 'Usuario registrado correctamente');
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('metodos_pago', function (Blueprint $table) {
             $table->id('id_metodo_pago');
-            $table->foreignId('id_usuario')->references('id_usuario')->on('usuarios');
+            $table->foreignId('id_usuario')->references('id_usuario')->on('users');
             $table->string('numero_cuenta');
             $table->string('titular')->nullable();
             $table->string('entidad_bancaria')->nullable();
