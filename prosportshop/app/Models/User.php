@@ -6,8 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class usuario extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -18,9 +19,13 @@ class usuario extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'dni',
         'name',
+        'apell',
+        'direccion',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -45,4 +50,15 @@ class usuario extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function isAdmin()
+{
+    return $this->role === 'admin';
+}
+
+public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
 }
