@@ -39,16 +39,16 @@
 
         <!-- Contraseña -->
         <div class="mt-4">
-            <x-input-label for="contrasena" :value="__('Contraseña')" />
-            <x-text-input id="contrasena" class="block w-full mt-1" type="password" name="contrasena" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('contrasena')" class="mt-2" />
+            <x-input-label for="password" :value="__('Contraseña')" />
+            <x-text-input id="password" class="block w-full mt-1" type="password" name="password" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirmar Contraseña -->
         <div class="mt-4">
-            <x-input-label for="contrasena_confirmation" :value="__('Confirmar Contraseña')" />
-            <x-text-input id="contrasena_confirmation" class="block w-full mt-1" type="password" name="contrasena_confirmation" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('contrasena_confirmation')" class="mt-2" />
+            <x-input-label for="password_confirmation" :value="__('Confirmar Contraseña')" />
+            <x-text-input id="password_confirmation" class="block w-full mt-1" type="password" name="password_confirmation" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
         <!-- Número de Cuenta -->

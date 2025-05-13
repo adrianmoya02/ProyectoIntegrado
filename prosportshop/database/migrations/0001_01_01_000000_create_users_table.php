@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('segundo_apellido')->nullable();
             $table->text('direccion')->nullable();
             $table->string('email')->unique();
-            $table->string('contrasena');
+            $table->string('password');
             $table->string('numero_cuenta');
             $table->string('rol');
             $table->string('localidad');
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('telefono', 15);
             $table->date('fecha_nacimiento');
             $table->string('estado');
+            $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });
 
@@ -54,5 +55,9 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('email_verified_at');
+        });
     }
 };

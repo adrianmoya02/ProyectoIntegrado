@@ -6,43 +6,58 @@
                 <!-- Logo -->
                 <div class="flex items-center shrink-0">
                     <!-- El logo en formato imagen -->
-                    <a href="{{ route('product.index') }}">
+                    <a href="{{ route('dashboard') }}">
                         <img src="{{ asset('storage/logo.jpg') }}" alt="Logo" class="block w-auto h-16" />
                     </a>
                 </div>
 
-
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('product.index')" :active="request()->routeIs('product.index')">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Nuestros productos') }}
                     </x-nav-link>
 
                     <!-- Mostrar "Mis Compras" solo si el usuario está logueado -->
                     @auth
-                    <x-nav-link :href="route('user.purchased_products')"
-                        :active="request()->routeIs('user.purchased_products')">
+                    <x-nav-link :href="route('productos.mis_compras')" :active="request()->routeIs('productos.mis_compras')">
                         {{ __('Mis Compras') }}
+                    </x-nav-link>
+
+                    <!-- Mostrar "Movimientos de Saldo" -->
+                    <x-nav-link :href="route('movimientos.create')" :active="request()->routeIs('movimientos.create')">
+                        {{ __('Movimientos de Saldo') }}
                     </x-nav-link>
                     @endauth
                 </div>
 
                 <!-- Mostrar "Añadir producto" solo si el usuario es admin -->
                 @auth
-                @if(Auth::user()->role == 'admin')
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('product.create')" :active="request()->routeIs('product.create')">
+                    <x-nav-link :href="route('products.create')" :active="request()->routeIs('products.create')">
                         {{ __('Añadir producto') }}
                     </x-nav-link>
                     <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
                         {{ __('Backend') }}
-                        <!-- Añadido el texto aquí -->
                     </x-nav-link>
-
                 </div>
-                @endif
                 @endauth
             </div>
+
+            <!-- Mostrar el saldo disponible -->
+            @auth
+            <div class="hidden sm:flex sm:items-center sm:ml-6">
+                @php
+                    $saldo = auth()->user()->movimientosSaldo->reduce(function ($carry, $movimiento) {
+                        return $movimiento->tipo === 'ingreso'
+                            ? $carry + $movimiento->cantidad
+                            : $carry - $movimiento->cantidad;
+                    }, 0);
+                @endphp
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ __('Saldo disponible: €') }}{{ number_format($saldo, 2) }}
+                </span>
+            </div>
+            @endauth
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -110,16 +125,24 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('product.index')" :active="request()->routeIs('product.index')">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Nuestros productos') }}
             </x-responsive-nav-link>
 
             <!-- Mostrar "Mis Compras" solo si el usuario está logueado -->
             @auth
-            <x-responsive-nav-link :href="route('user.purchased_products')"
-                :active="request()->routeIs('user.purchased_products')">
+            <x-responsive-nav-link :href="route('productos.mis_compras')" :active="request()->routeIs('productos.mis_compras')">
                 {{ __('Mis Compras') }}
             </x-responsive-nav-link>
+            @endauth
+
+            <!-- Mostrar "Añadir producto" solo si el usuario es admin -->
+            @auth
+            
+            <x-responsive-nav-link :href="route('products.create')" :active="request()->routeIs('products.create')">
+                {{ __('Añadir producto') }}
+            </x-responsive-nav-link>
+            
             @endauth
         </div>
 
