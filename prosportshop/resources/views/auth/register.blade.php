@@ -1,6 +1,9 @@
 <x-guest-layout>
     <div class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white dark:bg-gray-900 border border-green-200 dark:border-gray-700 p-8 rounded-2xl shadow-lg">
+            <div class="flex justify-center mb-4">
+                <img src="{{ asset('storage/logo.jpg') }}" alt="Logo de la tienda" class="block w-auto h-16" />
+            </div>
             <h2 class="mt-2 text-center text-2xl font-bold text-green-700 dark:text-green-300 tracking-wider uppercase">
                 {{ __('Registrar Usuario') }}
             </h2>

@@ -10,15 +10,14 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\MetodoPagoController;
 
+// Página de inicio: index de productos, sin login
+Route::get('/', [ProductoController::class, 'index'])->name('products.index');
 
+// Puedes dejar /productos también pública
+Route::get('/productos', [ProductoController::class, 'index'])->name('products.index');
 
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
-// Cambiar el dashboard para que apunte a products.index
-Route::get('/dashboard', [ProductoController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Si quieres que /dashboard también sea pública y muestre lo mismo:
+Route::get('/dashboard', [ProductoController::class, 'index'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -30,7 +29,6 @@ Route::middleware('auth')->group(function () {
 });
 Route::get('/productos/create', [ProductoController::class, 'create'])->name('products.create');
 Route::post('/productos', [ProductoController::class, 'store'])->name('products.store');
-Route::get('/productos', [ProductoController::class, 'index'])->name('products.index');
 // Correcto: primero la ruta específica
 Route::get('/productos/vender', [ProductoController::class, 'vender'])->middleware(['auth'])->name('productos.vender');
 Route::post('/productos/vender', [ProductoController::class, 'venderStore'])->middleware(['auth'])->name('productos.vender.store');

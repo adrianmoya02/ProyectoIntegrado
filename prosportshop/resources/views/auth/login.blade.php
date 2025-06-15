@@ -29,13 +29,6 @@
                     <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-600" />
                 </div>
 
-                <!-- Remember Me -->
-                <div class="flex items-center">
-                    <input id="remember_me" type="checkbox" class="rounded border-green-300 dark:border-gray-700 text-green-600 dark:bg-gray-800 focus:ring-green-500 dark:focus:ring-offset-gray-800" name="remember">
-                    <label for="remember_me" class="ms-2 text-sm text-gray-700 dark:text-gray-300">
-                        {{ __('Recordarme') }}
-                    </label>
-                </div>
 
                 <!-- Actions -->
                 <div class="flex items-center justify-between">

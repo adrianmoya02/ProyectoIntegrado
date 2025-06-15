@@ -38,11 +38,23 @@
                         </x-nav-link>
                         <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
                                 {{ __('Backend') }}
-                            </x-nav-link> 
-                            
+                            </x-nav-link>     
                         @endif
                     @endauth
                 </div>
+                <!-- Dark Mode Toggle -->
+    <div x-data="{ dark: localStorage.getItem('theme') === 'dark' }"
+     x-init="$watch('dark', val => { 
+         document.documentElement.classList.toggle('dark', val); 
+         localStorage.setItem('theme', val ? 'dark' : 'light');
+     }); 
+     if(localStorage.getItem('theme') === 'dark'){document.documentElement.classList.add('dark');}">
+    <button @click="dark = !dark"
+        class="px-3 py-2 rounded focus:outline-none transition bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+        <span x-show="!dark">🌙 Modo Oscuro</span>
+        <span x-show="dark">☀️ Modo Claro</span>
+    </button>
+</div>
             </div>
 
             <!-- Mostrar el saldo disponible -->
@@ -136,14 +148,14 @@
                     {{ __('Movimientos de Saldo') }}
                 </x-responsive-nav-link>
 
-                @if(Auth::user()->es_admin)
-                    <x-responsive-nav-link :href="route('products.create')" :active="request()->routeIs('products.create')">
-                        {{ __('Añadir producto') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
-                        {{ __('Backend') }}
-                    </x-responsive-nav-link>
-                @endif
+                @if(Auth::user()->rol === 'admin')
+        <x-responsive-nav-link :href="route('products.create')" :active="request()->routeIs('products.create')">
+            {{ __('Añadir producto') }}
+        </x-responsive-nav-link>
+        <x-responsive-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
+            {{ __('Backend') }}
+        </x-responsive-nav-link>
+    @endif
             @endauth
         </div>
 
