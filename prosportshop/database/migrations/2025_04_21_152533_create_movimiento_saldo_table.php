@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('movimientos_saldo', function (Blueprint $table) {
             $table->id('id_movimiento');
             $table->foreignId('id_usuario')->references('id_usuario')->on('users');
+            $table->foreignId('id_metodo_pago')->references('id_metodo_pago')->on('metodos_pago');
             $table->string('tipo');
             $table->decimal('cantidad', 10, 2);
             $table->date('fecha');

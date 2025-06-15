@@ -1,81 +1,81 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+        <h2 class="text-2xl font-bold leading-tight text-green-700 dark:text-green-300 tracking-wide uppercase">
             {{ __('Editar Producto') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-2xl font-bold">Editar Producto</h3>
+    <div class="py-12 bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-900 shadow-xl sm:rounded-2xl overflow-hidden border border-green-100 dark:border-gray-700">
+                <div class="p-8 text-gray-900 dark:text-gray-100">
+                    <h3 class="text-xl font-semibold mb-6 text-center text-green-600 dark:text-green-300">Modifica los detalles del producto</h3>
 
-                    <form action="{{ route('productos.update', $product->id_producto) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('productos.update', $product->id_producto) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
-                        @method('PUT') <!-- Método PUT para actualizar -->
+                        @method('PUT')
 
                         <!-- Nombre -->
-                        <div class="mb-4">
-                            <label for="nombre" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre</label>
+                        <div>
+                            <label for="nombre" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre</label>
                             <input type="text" id="nombre" name="nombre" value="{{ old('nombre', $product->nombre) }}" required
-                                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white @error('nombre') border-red-500 @enderror">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white @error('nombre') border-red-500 @enderror">
                             @error('nombre')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Precio -->
-                        <div class="mb-4">
-                            <label for="precio" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio (€)</label>
+                        <div>
+                            <label for="precio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Precio (€)</label>
                             <input type="number" step="0.01" id="precio" name="precio" value="{{ old('precio', $product->precio) }}" required
-                                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white @error('precio') border-red-500 @enderror">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white @error('precio') border-red-500 @enderror">
                             @error('precio')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Imagen -->
-                        <div class="mb-4">
-                            <label for="imagen" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Imagen</label>
+                        <div>
+                            <label for="imagen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Imagen</label>
                             <input type="file" id="imagen" name="imagen"
-                                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white @error('imagen') border-red-500 @enderror">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white @error('imagen') border-red-500 @enderror">
                             @if($product->imagen)
-                                <img src="{{ asset('storage/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="w-32 h-32 object-cover mt-2">
+                                <img src="{{ asset('storage/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="w-32 h-32 object-cover mt-3 rounded shadow">
                             @endif
                             @error('imagen')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Descripción -->
-                        <div class="mb-4">
-                            <label for="descripcion" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción</label>
+                        <div>
+                            <label for="descripcion" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción</label>
                             <textarea id="descripcion" name="descripcion" rows="4"
-                                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white @error('descripcion') border-red-500 @enderror">{{ old('descripcion', $product->descripcion) }}</textarea>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white @error('descripcion') border-red-500 @enderror">{{ old('descripcion', $product->descripcion) }}</textarea>
                             @error('descripcion')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Estado -->
-                        <div class="mb-4">
-                            <label for="estado" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estado</label>
+                        <div>
+                            <label for="estado" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estado</label>
                             <select id="estado" name="estado" required
-                                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white @error('estado') border-red-500 @enderror">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white @error('estado') border-red-500 @enderror">
                                 <option value="disponible" {{ old('estado', $product->estado) == 'disponible' ? 'selected' : '' }}>Disponible</option>
-                                <option value="no_disponible" {{ old('estado', $product->estado) == 'no_disponible' ? 'selected' : '' }}>No disponible</option>
+                                <option value="comprado" {{ old('estado', $product->estado) == 'comprado' ? 'selected' : '' }}>Comprado</option>
                             </select>
                             @error('estado')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Categoría -->
-                        <div class="mb-4">
-                            <label for="id_categoria" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoría</label>
+                        <div>
+                            <label for="id_categoria" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoría</label>
                             <select id="id_categoria" name="id_categoria" required
-                                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white @error('id_categoria') border-red-500 @enderror">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white @error('id_categoria') border-red-500 @enderror">
                                 @foreach ($categoria_producto as $categoria)
                                     <option value="{{ $categoria->id_categoria }}" {{ old('id_categoria', $product->id_categoria) == $categoria->id_categoria ? 'selected' : '' }}>
                                         {{ $categoria->nombre }}
@@ -83,13 +83,20 @@
                                 @endforeach
                             </select>
                             @error('id_categoria')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="flex space-x-2">
-                            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">Actualizar</button>
-                            <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">Cancelar</a>
+                        <!-- Botones -->
+                        <div class="flex justify-between pt-4">
+                            <button type="submit"
+                                class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition shadow">
+                                Actualizar
+                            </button>
+                            <a href="{{ route('dashboard') }}"
+                                class="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-700 transition shadow">
+                                Cancelar
+                            </a>
                         </div>
                     </form>
                 </div>

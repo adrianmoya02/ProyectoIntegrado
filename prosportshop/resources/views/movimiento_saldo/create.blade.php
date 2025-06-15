@@ -1,25 +1,28 @@
-<!-- filepath: c:\xampp\htdocs\prosportshop\ProyectoIntegrado\prosportshop\resources\views\movimiento_saldo\create.blade.php -->
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+        <h2 class="text-2xl font-bold leading-tight text-green-700 dark:text-green-300 tracking-wide uppercase">
             {{ __('Registrar Movimiento de Saldo') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __('Complete el formulario para registrar un movimiento de saldo') }}
+    <div class="py-12 bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-xl sm:rounded-2xl border border-green-200 dark:border-gray-700">
+                <div class="p-8 text-gray-900 dark:text-gray-100">
+                    <p class="mb-6 text-sm text-gray-700 dark:text-gray-300">
+                        Complete el formulario para registrar un movimiento de saldo en su cuenta.
+                    </p>
 
-                    <form method="POST" action="{{ route('movimientos.store') }}" class="max-w-md mx-auto">
+                    <form method="POST" action="{{ route('movimientos.store') }}" class="max-w-lg mx-auto space-y-6">
                         @csrf
 
                         <!-- Tipo de Movimiento -->
-                        <div class="mb-4">
-                            <label for="tipo" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Movimiento</label>
+                        <div>
+                            <label for="tipo" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                Tipo de Movimiento
+                            </label>
                             <select name="tipo" id="tipo" required
-                                class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                                 <option value="ingreso">Ingreso</option>
                                 <option value="retiro">Retiro</option>
                             </select>
@@ -29,29 +32,62 @@
                         </div>
 
                         <!-- Cantidad -->
-                        <div class="mb-4">
-                            <label for="cantidad" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cantidad (€)</label>
-                            <input type="number" step="0.01" name="cantidad" id="cantidad" required
-                                class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        <div>
+                            <label for="cantidad" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                Cantidad
+                            </label>
+                            <input type="number" name="cantidad" id="cantidad" step="0.01" min="0.01" required
+                                value="{{ old('cantidad') }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
                             @error('cantidad')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Fecha -->
-                        <div class="mb-4">
-                            <label for="fecha" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha</label>
+                        <div>
+                            <label for="fecha" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                Fecha
+                            </label>
                             <input type="date" name="fecha" id="fecha" required
-                                class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                value="{{ date('Y-m-d') }}"
+                                readonly
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-700 dark:text-white cursor-not-allowed" />
                             @error('fecha')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <button type="submit"
-                            class="w-auto text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-xs px-10 py-1.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 mx-auto block">
-                            Guardar Movimiento
-                        </button>
+                        <!-- Método de Pago -->
+                        <div>
+                            <label for="id_metodo_pago" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                Método de Pago
+                            </label>
+                            <div class="flex gap-2">
+                                <select name="id_metodo_pago" id="id_metodo_pago" required
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                                    <option value="">Selecciona un método</option>
+                                    @foreach($metodosPago as $metodo)
+                                        <option value="{{ $metodo->id_metodo_pago }}">{{ $metodo->descripcion ?? $metodo->numero_cuenta }}</option>
+                                    @endforeach
+                                </select>
+                                <a href="{{ route('metodos_pago.create') }}"
+                                   class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-semibold">
+                                    Añadir método de pago
+                                </a>
+                            </div>
+                            @error('id_metodo_pago')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Botón -->
+                        <div class="text-center pt-4">
+                            <button type="submit"
+                                class="inline-block px-6 py-2 text-white bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-sm shadow transition">
+                                Guardar Movimiento
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\CategoriaProducto;
 use App\Models\Compra;
+use App\Models\User;
 use App\Models\MovimientoSaldo;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,9 @@ class ProductoController extends Controller
 {
     public function index()
     {
-        $productos = Producto::all();
+        $productos = Producto::query()
+            // ...tus filtros...
+            ->paginate(4); // No uses ->get()
         return view('producto.index', compact('productos'));
     }
 
@@ -29,7 +32,7 @@ class ProductoController extends Controller
             'precio' => 'required|numeric|min:0',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'descripcion' => 'required|string',
-            'estado' => 'required|string|in:disponible,no_disponible',
+            'estado' => 'required|string|in:disponible,comprado',
             'id_categoria' => 'required|exists:categoria_producto,id_categoria',
         ]);
 
@@ -117,37 +120,47 @@ class ProductoController extends Controller
     }
 
     public function comprar($id)
-    {
-        $producto = Producto::findOrFail($id);
-        $usuario = auth()->user();
+{
+    $producto = Producto::findOrFail($id);
+    $usuario = auth()->user();
 
-        // Calcular el saldo disponible
-        $saldo = $usuario->movimientosSaldo->reduce(function ($carry, $movimiento) {
-            return $movimiento->tipo === 'ingreso'
-                ? $carry + $movimiento->cantidad
-                : $carry - $movimiento->cantidad;
-        }, 0);
+    // Calcular el saldo disponible
+    $saldo = $usuario->movimientosSaldo->reduce(function ($carry, $movimiento) {
+        return $movimiento->tipo === 'ingreso'
+            ? $carry + $movimiento->cantidad
+            : $carry - $movimiento->cantidad;
+    }, 0);
 
-        // Verificar si el saldo es suficiente
-        if ($saldo < $producto->precio) {
-            return redirect()->route('productos.show', $id)->with('error', 'Saldo insuficiente para comprar este producto.');
-        }
-
-        // Registrar la compra
-        Compra::create([
-            'id_usuario' => $usuario->id_usuario,
-            'id_producto' => $producto->id_producto,
-            'precio_compra' => $producto->precio, // Agregar el precio del producto
-            'fecha_compra' => now(),
-            'estado_transaccion' => 'completada', // Agregar el estado de la transacción
-        ]);
-
-        // Cambiar el estado del producto a "no disponible"
-        $producto->estado = 'no_disponible';
-        $producto->save();
-
-        return redirect()->route('productos.show', $id)->with('success', 'Producto comprado con éxito.');
+    // Verificar si el saldo es suficiente
+    if ($saldo < $producto->precio) {
+        return redirect()->route('productos.show', $id)->with('error', 'Saldo insuficiente para comprar este producto.');
     }
+
+    // Registrar el retiro en MovimientoSaldo para descontar el saldo
+    MovimientoSaldo::create([
+        'id_usuario' => $usuario->id_usuario,
+        'tipo' => 'retiro',
+        'cantidad' => $producto->precio,
+        'fecha' => now(),
+        'id_metodo_pago' => 1, // O el que corresponda
+    ]);
+
+    // Registrar la compra
+    Compra::create([
+        'id_usuario' => $usuario->id_usuario,
+        'id_producto' => $producto->id_producto,
+        'precio_compra' => $producto->precio,
+        'fecha_compra' => now(),
+        'estado_transaccion' => 'completada',
+    ]);
+
+    // Cambiar el estado del producto a "no disponible"
+    $producto->estado = 'comprado';
+    $producto->save();
+
+    return redirect()->route('productos.show', $id)->with('success', 'Producto comprado con éxito.');
+}
+
 
     public function storeReseña(Request $request, $id)
     {
@@ -174,38 +187,95 @@ class ProductoController extends Controller
 
     public function misCompras()
     {
-        $compras = \App\Models\Compra::where('id_usuario', auth()->id())->with('producto')->get();
+        $purchases = \App\Models\Compra::where('id_usuario', auth()->id())
+            ->with('producto')
+            ->get();
 
-        return view('producto.mis_compras', compact('compras'));
+        return view('user.purchased_products', compact('purchases'));
     }
 
     public function devolver($id)
-    {
-        $producto = Producto::findOrFail($id);
-        $usuario = auth()->user();
+{
+    $compra = \App\Models\Compra::where('id_usuario', auth()->id())
+        ->where('id_producto', $id)
+        ->first();
 
-        // Verificar si el usuario ha comprado este producto
-        $compra = $producto->compras->where('id_usuario', $usuario->id)->first();
-
-        if (!$compra) {
-            return redirect()->route('productos.show', $id)->with('error', 'No puedes devolver un producto que no has comprado.');
-        }
-
-        // Eliminar la compra
-        $compra->delete();
-
-        // Registrar un movimiento de saldo para reembolsar el dinero
-        MovimientoSaldo::create([
-            'id_usuario' => $usuario->id,
-            'tipo' => 'ingreso',
-            'cantidad' => $producto->precio,
-            'fecha' => now(),
-        ]);
-
-        // Cambiar el estado del producto a "disponible"
-        $producto->estado = 'disponible';
-        $producto->save();
-
-        return redirect()->route('productos.show', $id)->with('success', 'Producto devuelto con éxito.');
+    if (!$compra) {
+        return redirect()->back()->with('error', 'No puedes devolver un producto que no has comprado.');
     }
+
+    $producto = $compra->producto;
+
+    // Registrar el movimiento de saldo (reembolso)
+    \App\Models\MovimientoSaldo::create([
+        'id_usuario' => auth()->id(),
+        'tipo' => 'ingreso',          // Reembolso
+        'cantidad' => $producto->precio,
+        'fecha' => now(),
+        'id_metodo_pago' => 1,     // Puedes ajustar según corresponda
+    ]);
+
+    // Cambiar el estado del producto a 'disponible'
+    $producto->estado = 'disponible';
+    $producto->save();
+
+    $compra->delete(); // Elimina la compra
+
+    return redirect()->route('productos.devolver_vista')->with('success', 'Producto devuelto correctamente y saldo reembolsado.');
+}
+
+    public function devolverVista()
+    {
+        $purchases = \App\Models\Compra::where('id_usuario', auth()->id())
+            ->with('producto')
+            ->get();
+
+        return view('user.devolver_productos', compact('purchases'));
+    }
+    public function vender()
+    {
+        $categorias = \App\Models\CategoriaProducto::all();
+        return view('producto.vender', compact('categorias'));
+    }
+       
+    public function venderStore(Request $request)
+{
+    $request->validate([
+        'nombre' => 'required|string|max:255',
+        'descripcion' => 'required|string',
+        'precio_usuario' => 'required|numeric|min:0',
+        'categoria' => 'required|exists:categoria_producto,id_categoria',
+        'imagen' => 'required|image|max:2048',
+    ]);
+
+    $usuario = auth()->user();  // <--- aquí
+
+    // Guardar imagen
+    $imagenPath = $request->file('imagen')->store('productos', 'public');
+
+    // Calcular precio final (+20%)
+    $precioFinal = $request->precio_usuario * 1.20;
+
+    // Crear producto
+    Producto::create([
+        'nombre' => $request->nombre,
+        'descripcion' => $request->descripcion,
+        'precio' => $precioFinal,
+        'id_categoria' => $request->categoria,
+        'imagen' => $imagenPath,
+        'estado' => 'disponible',
+        'id_usuario' => $usuario->id_usuario,  // mejor usar la variable
+    ]);
+
+    MovimientoSaldo::create([
+        'id_usuario' => $usuario->id_usuario,
+        'tipo' => 'ingreso',
+        'cantidad' => $request->precio_usuario,
+        'fecha' => now(),
+        'id_metodo_pago' => 1, // asegúrate que puede ser null en la BD
+    ]);
+
+    return redirect()->route('products.index')->with('success', '¡Producto puesto a la venta!');
+}
+
 }

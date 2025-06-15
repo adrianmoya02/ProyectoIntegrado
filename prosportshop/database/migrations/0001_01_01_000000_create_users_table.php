@@ -20,13 +20,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('numero_cuenta');
-            $table->string('rol');
+            $table->enum('rol', ['user', 'admin'])->default('user');            
             $table->string('localidad');
             $table->string('provincia');
             $table->string('codigo_postal', 10);
             $table->string('telefono', 15);
             $table->date('fecha_nacimiento');
-            $table->string('estado');
+            $table->enum('estado', ['activo', 'inactivo'])->default('activo');            
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });

@@ -61,15 +61,24 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->rol === 'admin';
     }
     public function isUser()
     {
-        return $this->role === 'user';
+        return $this->rol === 'user';
     }
 
     public function movimientosSaldo()
     {
         return $this->hasMany(MovimientoSaldo::class, 'id_usuario', 'id_usuario');
     }
+    public function getSaldoDisponibleAttribute()
+    {
+    return $this->movimientosSaldo->reduce(function ($carry, $movimiento) {
+        return $movimiento->tipo === 'ingreso'
+            ? $carry + $movimiento->cantidad
+            : $carry - $movimiento->cantidad;
+    }, 0);
+    }
+
 }

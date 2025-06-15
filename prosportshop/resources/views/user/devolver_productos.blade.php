@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-2xl font-bold leading-tight text-green-700 dark:text-green-300 tracking-wider uppercase">
-            {{ __('Productos Comprados') }}
+            {{ __('Devolver Productos') }}
         </h2>
     </x-slot>
 
@@ -21,6 +21,7 @@
                                     <th class="px-6 py-3 text-left text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-wide">Precio</th>
                                     <th class="px-6 py-3 text-left text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-wide">Fecha de Compra</th>
                                     <th class="px-6 py-3 text-left text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-wide">Imagen</th>
+                                    <th class="px-6 py-3 text-left text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-wide">Acción</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -37,6 +38,13 @@
                                             @else
                                                 <span class="text-gray-500">Sin Imagen</span>
                                             @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <form action="{{ route('productos.devolver', $purchase->producto->id_producto) }}" method="POST" onsubmit="return confirm('¿Seguro que quieres devolver este producto?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800 transition">Devolver</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

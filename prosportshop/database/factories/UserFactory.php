@@ -29,7 +29,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'role' => 'user', // Por defecto, el rol es 'user'
+            'rol' => 'user', // Por defecto, el rol es 'user'
+            'estado' => 'activo', // Por defecto, el estado es 'activo'
         ];
     }
 
