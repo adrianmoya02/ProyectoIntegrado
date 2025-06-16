@@ -46,8 +46,10 @@ class MovimientoSaldoController extends Controller
     }
     public function create()
     {
-    $metodosPago = MetodoPago::all();
-    return view('movimiento_saldo.create', compact('metodosPago'));
+        $user = auth()->user();
+        $metodosPago = \App\Models\MetodoPago::where('id_usuario', $user->id_usuario)->get();
+
+        return view('movimiento_saldo.create', compact('metodosPago'));
     }
 
 }

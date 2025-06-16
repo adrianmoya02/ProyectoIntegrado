@@ -64,13 +64,17 @@
                                 Método de Pago
                             </label>
                             <div class="flex gap-2">
-                                <select name="id_metodo_pago" id="id_metodo_pago" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
-                                    <option value="">Selecciona un método</option>
-                                    @foreach($metodosPago as $metodo)
-                                        <option value="{{ $metodo->id_metodo_pago }}">{{ $metodo->descripcion ?? $metodo->numero_cuenta }}</option>
-                                    @endforeach
-                                </select>
+                                @if($metodosPago->count())
+                                    <select name="id_metodo_pago" id="id_metodo_pago" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                                        <option value="">Selecciona un método</option>
+                                        @foreach($metodosPago as $metodo)
+                                            <option value="{{ $metodo->id_metodo_pago }}">{{ $metodo->descripcion ?? $metodo->numero_cuenta }}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <span class="text-red-600 text-sm">No tienes métodos de pago registrados.</span>
+                                @endif
                                 <a href="{{ route('metodos_pago.create') }}"
                                    class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-semibold">
                                     Añadir método de pago

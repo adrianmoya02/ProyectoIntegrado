@@ -17,7 +17,7 @@ Route::get('/', [ProductoController::class, 'index'])->name('products.index');
 Route::get('/productos', [ProductoController::class, 'index'])->name('products.index');
 
 // Si quieres que /dashboard también sea pública y muestre lo mismo:
-Route::get('/dashboard', [ProductoController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [ProductoController::class, 'index'])->name('dashboard')->middleware(['verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
